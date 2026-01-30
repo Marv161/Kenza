@@ -26,6 +26,9 @@
             align-items: center;
             justify-content: center;
             color: white;
+            /* Evitar selección de texto para mayor seguridad visual */
+            user-select: none;
+            -webkit-user-select: none;
         }
 
         /* Firmamento Estrellado */
@@ -213,13 +216,15 @@
             object-fit: cover;
             border: 2px solid rgba(255, 255, 255, 0.1);
             box-shadow: 0 0 30px rgba(30, 58, 138, 0.4);
+            /* Bloquear interacción nativa para evitar arrastre */
+            pointer-events: none;
         }
 
         /* --- INFO BOX CON GLOW --- */
         .info-card-mini {
             position: relative;
             margin: 0 auto;
-            max-width: 280px; /* Más pequeño */
+            max-width: 280px;
             padding: 2px;
             border-radius: 1.5rem;
             overflow: hidden;
@@ -262,6 +267,7 @@
             height: 30px;
             object-fit: contain;
             filter: drop-shadow(0 0 5px rgba(255,255,255,0.2));
+            pointer-events: none;
         }
 
         /* --- MINI REPRODUCTOR --- */
@@ -339,7 +345,7 @@
                         <span class="text-[0.6rem] uppercase tracking-[0.3em] opacity-50">Presentación</span>
                         <div class="nationality-row">
                             <span class="text-sm font-light tracking-widest uppercase">Nacionalidad:</span>
-                            <img src="https://images.emojiterra.com/google/noto-emoji/unicode-16.0/color/1024px/1f1f7-1f1f4.png" alt="[Image of Bandera]" class="flag-img">
+                            <img src="https://images.emojiterra.com/google/noto-emoji/unicode-16.0/color/1024px/1f1f7-1f1f4.png" alt="" class="flag-img">
                         </div>
                     </div>
                 </div>
@@ -358,6 +364,42 @@
     <audio id="bg-music" src="musica.mp3" loop preload="auto"></audio>
 
     <script>
+        // --- SEGURIDAD Y PROTECCIÓN DE CONTENIDO ---
+
+        // Desactivar click derecho
+        document.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+        });
+
+        // Bloquear arrastre de imágenes
+        document.addEventListener('dragstart', (e) => {
+            if (e.target.nodeName === 'IMG') {
+                e.preventDefault();
+            }
+        });
+
+        // Bloquear atajos de teclado para inspeccionar (F12, Ctrl+Shift+I, Ctrl+U, etc.)
+        document.addEventListener('keydown', (e) => {
+            // Bloquear F12
+            if (e.key === 'F12') {
+                e.preventDefault();
+            }
+            // Bloquear Ctrl + Shift + I/J/C
+            if (e.ctrlKey && e.shiftKey && (e.key.toLowerCase() === 'i' || e.key.toLowerCase() === 'j' || e.key.toLowerCase() === 'c')) {
+                e.preventDefault();
+            }
+            // Bloquear Ctrl + U (Ver fuente)
+            if (e.ctrlKey && e.key.toLowerCase() === 'u') {
+                e.preventDefault();
+            }
+            // Bloquear Ctrl + S (Guardar)
+            if (e.ctrlKey && e.key.toLowerCase() === 's') {
+                e.preventDefault();
+            }
+        });
+
+        // --- LÓGICA DE LA APLICACIÓN ---
+
         const audio = document.getElementById('bg-music');
         const intro = document.getElementById('intro-screen');
         const main = document.getElementById('main-content');
@@ -372,9 +414,9 @@
             main.classList.add('content-visible');
             
             // Iniciar música
-            audio.play().catch(e => console.log("Auto-play blocked by browser. Interaction required."));
+            audio.play().catch(e => console.log("Audio play blocked."));
             
-            // Pequeña vibración en el player para indicar que hay música
+            // Animación inicial del player
             setTimeout(() => {
                 player.classList.add('expanded');
                 setTimeout(() => player.classList.remove('expanded'), 3000);
@@ -386,5 +428,4 @@
         }
     </script>
 </body>
-
 </html>
